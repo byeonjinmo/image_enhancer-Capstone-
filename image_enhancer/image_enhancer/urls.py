@@ -17,6 +17,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from django.contrib import admin
+from django.urls import path, include  # include를 추가로 임포트합니다.
+
+    # enhancer 앱의 URL을 포함
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('enhancer/', include('enhancer.urls')),  # enhancer 앱의 URL 포함
+    #  http://127.0.0.1:8000/enhancer/upload/ 주소로 접속
 ]
+
+ # 미디어 파일 URL을 추가
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
