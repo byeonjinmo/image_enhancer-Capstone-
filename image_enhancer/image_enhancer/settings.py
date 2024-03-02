@@ -128,3 +128,7 @@ import os
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# settings.py 정적 파일을 제대로 서빙하기 위
+STATIC_URL = '/static/'
+
+

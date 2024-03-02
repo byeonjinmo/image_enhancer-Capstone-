@@ -1,0 +1,110 @@
+{% load static %}
+<!-- 정적 파일 태그 로드 -->
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to Image Enhancer</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+        display: flex;
+        flex-direction: column;   /* 스택의 방향을 세로로 설정 */
+        justify-content: center;
+        align-items: center;  /* 가로 방향으로도 중앙 정렬 */
+        height: 100vh;
+        margin: 0; /* 기본 마진 제거 */
+        /* 배경 이미지 설정 */
+        background-image: url('{% static "enhancer/images/bg0.jpg" %}');
+        /* 색상 그라데이션 배경 설정 */
+        /*background: linear-gradient(to right, #a1c4fd, #c2e9fb);*/
+        background-size: cover;
+        background-position: center;
+        color: #ffffff; /* 텍스트 색상을 흰색으로 설정 */
+        font-family: 'Arial', sans-serif; /* 폰트 설정 */
+    }
+    h1 {
+            margin-bottom: 100px; /* 제목과 버튼 사이의 공간 설정 */
+            background: rgba(0, 0, 0, 0.4); /* 제목 배경 반투명 효과 */
+            padding: 10px; /* 내부 여백 설정 */
+            border-radius: 5px; /* 경계선 둥글게 설정 */
+
+            top: 100px; /* Position from the top */
+        }
+        .start-container {
+            text-align: center;
+        }
+        .start-btn {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: background-color 0.3s ease;
+            position: marker;
+        }
+        .start-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <style>
+    /* 로딩 애니메이션 스타일 */
+    .loader {
+        border: 5px solid #f3f3f3; /* Light grey */
+        border-top: 5px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<div id="loader" class="loader"></div>
+
+</head>
+<body>
+    <div class="start-container">
+        <h1>Welcome to Image Enhancer</h1>
+        <button class="start-btn" onclick="startService()">Start</button>
+    </div>
+
+    <script>
+        function startService() {
+            window.location.href = '/enhancer/upload/';
+        }
+    </script>
+    <script>
+    // 로딩 애니메이션을 숨기는 함수
+    function hideLoader() {
+        document.getElementById('loader').style.display = 'none';
+    }
+
+    // 로딩 애니메이션을 표시하는 함수
+    function showLoader() {
+        document.getElementById('loader').style.display = 'block';
+    }
+
+    // 이미지 처리가 시작될 때 로더를 표시
+    showLoader();
+
+    // 기본적으로 2초 후에 로더를 숨김
+    setTimeout(hideLoader, 2000);
+
+    // 이미지 처리가 끝나면 호출될 함수 (예시)
+    function onImageProcessed() {
+        hideLoader();
+    }
+
+    // 이미지 처리가 2초보다 더 걸릴 경우에 대비하여
+    // onImageProcessed 함수를 이미지 처리 로직이 완료되는 지점에서 호출해야 합니다.
+</script>
+
+</body>
+</html>
