@@ -1,3 +1,5 @@
+{% load static %} <!-- static 템플릿 태그를 로드한다. -->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,13 +22,34 @@
         </select>
         <button type="submit">Upload</button>
     </form>
+    <div id="loading" style="display: none;">
+    <div class="loading-spinner"></div>
+    </div>
+    <!--로딩 스타일 -->
+    <style>
+        .loading-spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
 
-    <script>
-    document.querySelector("form").onsubmit = function() {
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+    </style>
+
+    <!--<script>
+        document.querySelector("form").onsubmit = function() {
         alert("Your image is being processed. Please wait...");
         // 일단 간단하게하기 위한 alert. 후에 더 사용자 친화적인 알림 방법을 고려해야함 *****.
     }
-    </script>
+    </script>-->
+
 
     <script>
         function previewImage() {
@@ -47,6 +70,8 @@
             }
         }
     </script>
+    <script src="{% static 'js/uploadHandler.js' %}"></script>
+
 </body>
 </html>
 
