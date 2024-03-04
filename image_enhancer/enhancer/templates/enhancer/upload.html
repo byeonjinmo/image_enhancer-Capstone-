@@ -1,0 +1,83 @@
+{% load static %} <!-- static 템플릿 태그를 로드한다. -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Image</title>
+</head>
+<body>
+    <h1>Upload an Image</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="text" name="title" placeholder="Enter image title" required>
+        <input type="file" name="original_image" id="original_image" required onchange="previewImage();">
+        <!-- 이미지 미리보기를 표시할 img 태그 -->
+        <img id="image_preview" src="#" alt="Image Preview" style="display: none; width: 500px;"/> <!-- 스타일 수정 포함 -->
+        <label for="enhanced_size">Enhanced Image Size:</label>
+        <select name="enhanced_size" id="enhanced_size">
+            <option value="800x600">800x600</option>
+            <option value="1024x768">1024x768</option>
+            <option value="1280x960">1280x960</option>
+            <!-- 추가적인 옵션을 제공한다. -->
+        </select>
+        <select name="enhance_option">
+            <option value="resize">일반 사이즈 변경(무료)</option>
+            <option value="gan">GAN을 이용한 이미지 강화(무료)</option>
+            <option value="advanced_gan">고급 GAN을 이용한 이미지 강화(유료)</option>
+        </select>
+        <button type="submit">Upload</button>
+    </form>
+    <div id="loading" style="display: none;">
+    <div class="loading-spinner"></div>
+    </div>
+    <!--로딩 스타일 -->
+    <style>
+        .loading-spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+    </style>
+
+    <!--<script>
+        document.querySelector("form").onsubmit = function() {
+        alert("Your image is being processed. Please wait...");
+        // 일단 간단하게하기 위한 alert. 후에 더 사용자 친화적인 알림 방법을 고려해야함 *****.
+    }
+    </script>-->
+
+
+    <script>
+        function previewImage() {
+            var preview = document.getElementById('image_preview');
+            var file = document.getElementById('original_image').files[0];
+            var reader = new FileReader();
+
+            reader.onloadend = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block'; // 이미지가 선택되면 미리보기를 표시
+            }
+
+            if (file) {
+                reader.readAsDataURL(file); // 파일 읽기
+            } else {
+                preview.src = "";
+                preview.style.display = 'none'; // 파일이 선택되지 않았으면 미리보기 숨김
+            }
+        }
+    </script>
+    <script src="{% static 'js/uploadHandler.js' %}"></script>
+
+</body>
+</html>
+
