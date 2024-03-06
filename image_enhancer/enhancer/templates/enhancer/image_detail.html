@@ -1,0 +1,22 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Detail</title>
+</head>
+<body>
+    <h1>Image Detail</h1>
+    <div>
+        <h2>Original Image</h2>
+        <img src="{{ image.original_image.url }}" alt="{{ image.title }}">
+        <!-- 원본 이미지 다운로드 링크에 파일 이름 지정 -->
+        <a href="{{ image.original_image.url }}" download="{{ image.title }}_original.jpg">Download Original Image</a>
+    </div>
+    <div>
+        <h2>Enhanced Image</h2>
+        <img src="{{ image.enhanced_image.url }}" alt="{{ image.title }}">
+        <!-- 처리된 이미지 다운로드 링크에 파일 이름 지정 -->
+        <a href="{{ image.enhanced_image.url }}" download="{{ image.title }}_enhanced.jpg">Download Enhanced Image</a>
+    </div>
+</body>
+</html>
