@@ -8,11 +8,22 @@ from django.shortcuts import render, get_object_or_404
 # views.py
 from django.shortcuts import render
 
+# GAN 기능 임포트
+from .models.dcgan import Generator
+import torch
+from torchvision.transforms import functional as TF
+
+
+# GAN 모델을 초기화하고 가중치를 불러옵니다.
+generator = Generator()
+generator.load_state_dict(torch.load('dcgan_weights.pth', map_location='cpu'))
+generator.eval()
+
 # 여기에 GAN 처리를 위한 함수들을 추가합니다.
-def process_with_gan(image_file):
+#def process_with_gan(image_file):
     # GAN 처리 로직을 구현합니다.
-    # 여기서는 가상의 코드로, 실제 구현이 필요합니다.
-    return processed_image_stream
+    # 여기서는 가상의 코드로, 실제 구현이 필요
+    #return processed_image_stream
 
 def process_with_advanced_gan(image_file):
     # 고급 GAN 처리 로직을 구현합니다.
@@ -50,8 +61,26 @@ def upload_image_view(request):
         # 선택된 옵션에 따라 이미지 처리
         enhance_option = request.POST.get('enhance_option')
         if enhance_option == 'gan':
-            # 무료 GAN 처리
-            processed_image_stream = process_with_gan(original_image)
+            # 이미지를 전처리
+            input_image = TF.to_tensor(PilImage.open(original_image).convert("RGB"))
+            input_image = TF.resize(input_image, size=(64, 64))  # DCGAN에 맞는 이미지 사이즈 조절
+            input_image = input_image.unsqueeze(0)  # 가짜 배치 차원 추가
+
+            # GAN을 이용하여 이미지를 개선합니다.
+            with torch.no_grad():
+                generated_image = generator(input_image)
+
+            # 후처리를 거쳐 이미지를 저장합니다.
+            processed_image = TF.to_pil_image(generated_image.squeeze(0))
+            processed_image_stream = io.BytesIO()
+            processed_image.save(processed_image_stream, format='JPEG')
+            processed_image_stream.seek(0)
+            processed_image_file = ContentFile(processed_image_stream.read(), name="enhanced_" + original_image.name)
+            image_instance.enhanced_image.save(processed_image_file.name, processed_image_file)
+
+            # 이미지 인스턴스를 저장하고 상세 페이지로 리디렉트합니다.
+            image_instance.save()
+            return redirect('image_detail', image_id=image_instance.id)
         elif enhance_option == 'advanced_gan':
             # 유료 고급 GAN 처리
             processed_image_stream = process_with_advanced_gan(original_image)
