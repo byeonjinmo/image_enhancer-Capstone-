@@ -1,34 +1,26 @@
-from django.shortcuts import render, redirect
-from django.core.files.storage import FileSystemStorage
+from django.shortcuts import redirect
 from django.core.files.base import ContentFile
 from .models import Image
 from PIL import Image as PilImage
 import io
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 # views.py
 from django.shortcuts import render
 
 # GAN 기능 임포트
-from .models.dcgan import Generator
+import os
+import argparse
+import torch.nn as nn
 import torch
 from torchvision.transforms import functional as TF
 
-
+from .models.dcgan import DCGAN
 # GAN 모델을 초기화하고 가중치를 불러옵니다.
-generator = Generator()
-generator.load_state_dict(torch.load('dcgan_weights.pth', map_location='cpu'))
+dcgan_instance = DCGAN()
+
+generator = dcgan_instance.generator(128)
+generator.load_state_dict(torch.load('../celebA_5epoch_pth/generator_weights.pth', map_location='cpu'))
 generator.eval()
-
-# 여기에 GAN 처리를 위한 함수들을 추가합니다.
-#def process_with_gan(image_file):
-    # GAN 처리 로직을 구현합니다.
-    # 여기서는 가상의 코드로, 실제 구현이 필요
-    #return processed_image_stream
-
-def process_with_advanced_gan(image_file):
-    # 고급 GAN 처리 로직을 구현합니다.
-    # 여기서는 가상의 코드로, 실제 구현이 필요합니다.
-    return processed_image_stream
 
 # 이미지 처리 함수
 def enhance_image(image_file, size):
@@ -98,6 +90,5 @@ def image_detail_view(request, image_id):
 # 시작 화면
 def index_view(request):
     return render(request, 'index.html')
-
 
 
