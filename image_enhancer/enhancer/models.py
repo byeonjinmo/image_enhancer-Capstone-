@@ -1,5 +1,5 @@
 from django.db import models
-
+# ㄹ
 class Image(models.Model):
     title = models.CharField(max_length=255)
     original_image = models.ImageField(upload_to='images/')

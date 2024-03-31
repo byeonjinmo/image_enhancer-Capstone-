@@ -1,5 +1,5 @@
 from __future__ import print_function, division
-
+from PIL import Image as PilImage
 from keras.datasets import mnist
 from keras.layers import Input, Dense, Reshape, Flatten, Dropout
 from keras.layers import BatchNormalization, Activation, ZeroPadding2D
@@ -9,6 +9,12 @@ from keras.models import Sequential, Model
 from keras.optimizers import Adam
 
 import matplotlib.pyplot as plt
+
+import os
+
+# 'images' 디렉토리가 있는지 확인하고, 없으면 생성
+if not os.path.exists('images'):
+    os.makedirs('images')
 
 import sys
 import numpy as np
@@ -101,6 +107,34 @@ class DCGAN():
         validity = model(img)
 
         return Model(img, validity)
+
+    def preprocess_input(self, input_image):
+        # input_image는 PIL Image 객체
+        input_image = input_image.convert('L')  # 그레이스케일로 변환
+        input_image = input_image.resize((self.img_rows, self.img_cols))  # GAN 입력 크기로 조절
+        image_array = np.array(input_image)
+        image_array = (image_array - 127.5) / 127.5  # 픽셀 값을 [-1, 1] 범위로 정규화
+        image_array = np.expand_dims(image_array, axis=2)  # 차원 추가
+        image_array = np.expand_dims(image_array, axis=0)  # 배치 차원 추가
+        return image_array
+
+    def postprocess_output(self, generated_image):
+        # generated_image는 [-1, 1] 범위의 값들을 가지는 배열
+        generated_image = 0.5 * generated_image + 0.5  # [0, 1] 범위로 스케일링
+        generated_image = generated_image.reshape((self.img_rows, self.img_cols))  # 원래 크기로 변경
+        generated_image = (generated_image * 255).astype(np.uint8)  # [0, 255] 범위로 스케일링
+        output_image = PilImage.fromarray(generated_image)  # PIL Image 객체로 변환
+        return output_image
+
+    def generate_image(self, input_image):
+        # 전처리
+        processed_image = self.preprocess_input(input_image)
+        # GAN을 사용하여 이미지를 생성
+        noise = np.random.normal(0, 1, (1, self.latent_dim))
+        generated_image = self.generator.predict(noise)
+        # 후처리
+        output_image = self.postprocess_output(generated_image[0])
+        return output_image
 
     def train(self, epochs, batch_size=128, save_interval=50):
 
