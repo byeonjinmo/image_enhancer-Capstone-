@@ -1,27 +1,19 @@
 from django.shortcuts import redirect
 from django.core.files.base import ContentFile
-from .models import Image
 from PIL import Image as PilImage
 import io
+from .models import Image
 from django.shortcuts import get_object_or_404
-# views.py
+# views.p
 from django.shortcuts import render
 
 # GAN 기능 임포트
-import os
-import argparse
-import torch.nn as nn
+
 import torch
 from torchvision.transforms import functional as TF
 
+# GAN 모델을 초기화하고 가중치를 불러온다.
 from .models.dcgan import DCGAN
-# GAN 모델을 초기화하고 가중치를 불러옵니다.
-dcgan_instance = DCGAN()
-
-generator = dcgan_instance.generator(128)
-generator.load_state_dict(torch.load('../celebA_5epoch_pth/generator_weights.pth', map_location='cpu'))
-generator.eval()
-
 # 이미지 처리 함수
 def enhance_image(image_file, size):
     # 사용자가 선택한 크기로 이미지 크기를 조정하는 로직
@@ -53,26 +45,30 @@ def upload_image_view(request):
         # 선택된 옵션에 따라 이미지 처리
         enhance_option = request.POST.get('enhance_option')
         if enhance_option == 'gan':
-            # 이미지를 전처리
-            input_image = TF.to_tensor(PilImage.open(original_image).convert("RGB"))
-            input_image = TF.resize(input_image, size=(64, 64))  # DCGAN에 맞는 이미지 사이즈 조절
-            input_image = input_image.unsqueeze(0)  # 가짜 배치 차원 추가
+            # DCGAN 인스턴스 생성
+            dcgan_instance = DCGAN()
 
-            # GAN을 이용하여 이미지를 개선합니다.
-            with torch.no_grad():
-                generated_image = generator(input_image)
+            # 업로드된 이미지 객체 가져오기
+            input_pil_image = PilImage.open(original_image).convert("RGB")
 
-            # 후처리를 거쳐 이미지를 저장합니다.
-            processed_image = TF.to_pil_image(generated_image.squeeze(0))
+            # DCGAN을 사용하여 이미지 개선
+            enhanced_pil_image = dcgan_instance.generate_image(input_pil_image)
+
+            # 개선된 이미지를 바이트 스트림으로 변환
             processed_image_stream = io.BytesIO()
-            processed_image.save(processed_image_stream, format='JPEG')
+            enhanced_pil_image.save(processed_image_stream, format='JPEG', quality=90)
             processed_image_stream.seek(0)
+
+            # 바이트 스트림에서 Django 이미지 필드에 저장할 수 있는 ContentFile 생성
             processed_image_file = ContentFile(processed_image_stream.read(), name="enhanced_" + original_image.name)
+
+            # 개선된 이미지 저장
             image_instance.enhanced_image.save(processed_image_file.name, processed_image_file)
 
-            # 이미지 인스턴스를 저장하고 상세 페이지로 리디렉트합니다.
+            # 이미지 인스턴스 저장 및 상세 페이지로 리디렉션
             image_instance.save()
             return redirect('image_detail', image_id=image_instance.id)
+
         elif enhance_option == 'advanced_gan':
             # 유료 고급 GAN 처리
             processed_image_stream = process_with_advanced_gan(original_image)
