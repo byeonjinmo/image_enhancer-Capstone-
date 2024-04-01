@@ -45,8 +45,11 @@ def upload_image_view(request):
         # 선택된 옵션에 따라 이미지 처리
         enhance_option = request.POST.get('enhance_option')
         if enhance_option == 'gan':
+            def load_pretrained_weights(self,generator_weights):
+                self.generator.load_weights(generator_weights)
             # DCGAN 인스턴스 생성
             dcgan_instance = DCGAN()
+            dcgan_instance.load_pretrained_weights('/Users/mac/Desktop/24년 대학/image_enhancer/celebA_5epoch_pth/generator_weights.pth')
 
             # 업로드된 이미지 객체 가져오기
             input_pil_image = PilImage.open(original_image).convert("RGB")
