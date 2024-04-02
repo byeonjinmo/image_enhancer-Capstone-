@@ -108,6 +108,9 @@ class DCGAN():
 
         return Model(img, validity)
 
+    def load_pretrained_weights(self, generator_weights_path):
+        # Keras 모델에 가중치를 로드하는 함수
+        self.generator.load_weights(generator_weights_path)
     def preprocess_input(self, input_image):
         # input_image는 PIL Image 객체
         input_image = input_image.convert('L')  # 그레이스케일로 변환
