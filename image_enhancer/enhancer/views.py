@@ -50,7 +50,7 @@ def upload_image_view(request):
                 self.generator.load_weights(generator_weights)
             # DCGAN 인스턴스 생성
             dcgan_instance = DCGAN()
-            #dcgan_instance.load_pretrained_weights('/Users/mac/Desktop/24년 대학/image_enhancer/celebA_5epoch_pth/generator_weights.pth')
+            dcgan_instance.load_pretrained_weights('/Users/mac/Desktop/24년 대학/image_enhancer/celebA_5epoch_pth/generator_weights.pth')
 
             # 업로드된 이미지 객체 가져오기
             input_pil_image = PilImage.open(original_image).convert("RGB")
@@ -80,29 +80,34 @@ def upload_image_view(request):
 
             # DCGAN 인스턴스 생성
             srgan_instance = GeneratorResNet()
-            #srgan_instance.load_pretrained_weights('/Users/mac/Desktop/24년 대학/image_enhancer/celebA_5epoch_pth/generator_weights.pth')
 
+            srgan_weights_path = '/Users/mac/Desktop/24년 대학/image_enhancer/celebA_5epoch_pth/generator_weights.pth'
+            srgan_instance.load_state_dict(torch.load(srgan_weights_path, map_location=torch.device('cpu')))
             srgan_instance.eval()
-            # 업로드된 이미지 객체 가져오기
+
+            # 업로드된 이미지를 PIL 이미지로 변환
             input_pil_image = PilImage.open(original_image).convert("RGB")
 
-            # DCGAN을 사용하여 이미지 개선
-            enhanced_pil_image = srgan_instance.generate_image(input_pil_image)
+            # 이미지를 모델에 입력하기 전에 적절한 텐서로 변환
+            input_tensor = TF.to_tensor(input_pil_image).unsqueeze(0)
 
-            # 개선된 이미지를 바이트 스트림으로 변환
+            # 모델을 사용하여 이미지 개선
+            with torch.no_grad():
+                enhanced_tensor = srgan_instance(input_tensor)
+
+            # 모델 출력 후처리
+            enhanced_tensor = (enhanced_tensor.squeeze().detach() + 1) / 2
+            enhanced_pil_image = TF.to_pil_image(enhanced_tensor)
+
+            # 개선된 이미지를 바이트 스트림으로 변환 및 저장
             processed_image_stream = io.BytesIO()
             enhanced_pil_image.save(processed_image_stream, format='JPEG', quality=90)
             processed_image_stream.seek(0)
-
-            # 바이트 스트림에서 Django 이미지 필드에 저장할 수 있는 ContentFile 생성
             processed_image_file = ContentFile(processed_image_stream.read(), name="enhanced_" + original_image.name)
-
-            # 개선된 이미지 저장
             image_instance.enhanced_image.save(processed_image_file.name, processed_image_file)
 
             # 이미지 인스턴스 저장 및 상세 페이지로 리디렉션
             image_instance.save()
-
             return redirect('image_detail', image_id=image_instance.id)
             # 이미지 인스턴스 저장 및 상세 페이지로 리디렉션
         image_instance.save() # 그냥 이미지 조절 상태의 반환
