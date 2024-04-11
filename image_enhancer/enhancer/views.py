@@ -78,10 +78,10 @@ def upload_image_view(request):
             def load_pretrained_weights(self, generator_weights):
                 self.generator.load_weights(generator_weights)
 
-            # DCGAN 인스턴스 생성
+            # SRGAN 인스턴스 생성
             srgan_instance = GeneratorResNet()
 
-            srgan_weights_path = '/Users/mac/Desktop/24년 대학/image_enhancer/celebA_5epoch_pth/generator_weights.pth'
+            srgan_weights_path = '/Users/mac/Desktop/24년 대학/image_enhancer/celebA_5epoch_pth/generator_weights20.pth'
             srgan_instance.load_state_dict(torch.load(srgan_weights_path, map_location=torch.device('cpu')))
             srgan_instance.eval()
 
