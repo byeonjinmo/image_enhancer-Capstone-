@@ -8,7 +8,6 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 
 # GAN 기능 임포트
-
 import torch
 from torchvision.transforms import functional as TF
 
@@ -50,7 +49,7 @@ def upload_image_view(request):
                 self.generator.load_weights(generator_weights)
             # DCGAN 인스턴스 생성
             dcgan_instance = DCGAN()
-            dcgan_instance.load_pretrained_weights('/Users/mac/Desktop/24년 대학/image_enhancer/celebA_5epoch_pth/generator_weights.pth')
+            dcgan_instance.load_pretrained_weights('/Users/mac/Desktop/24년 대학/image_enhancer/celebA_5epoch_pth/M_generator_weights.pth')
 
             # 업로드된 이미지 객체 가져오기
             input_pil_image = PilImage.open(original_image).convert("RGB")
