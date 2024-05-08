@@ -85,13 +85,13 @@ def upload_image_view(request):
 
             # 유료 고급 GAN 처리
 
-            iterations = int(request.POST.get('iterations', 100))  # 사용자 입력 반복 횟수
+            iterations = int(request.POST.get('iterations', 10))  # 사용자 입력 반복 횟수
 
             srgan_instance = GeneratorResNet()
 
-            load_pretrained_weights(srgan_instance, '/Users/mac/Desktop/24년 대학/image_enhancer/celebA_5epoch_pth/generator_weights.pth')
+            load_pretrained_weights(srgan_instance, '/Users/mac/Desktop/24년 대학/image_enhancer/celebA_5epoch_pth/M_generator_900.pth')
 
-            input_pil_image = PilImage.open(original_image).convert("RGB")
+            input_pil_image = PilImage.open(original_image).convert("L") # RGB -> L
 
             # 반복적 이미지 향상
 
