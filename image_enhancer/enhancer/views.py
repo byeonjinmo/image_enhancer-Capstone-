@@ -74,38 +74,66 @@ def upload_image_view(request):
             return redirect('image_detail', image_id=image_instance.id)
 
         elif enhance_option == 'advanced_gan':
+
             # SRGAN 인스턴스 생성
+
             srgan_instance = GeneratorResNet()
 
-            srgan_weights_path = '/Users/mac/Desktop/24년 대학/image_enhancer/wei_pth/M_generator_20.pth'
-            srgan_instance.load_state_dict(torch.load(srgan_weights_path, map_location=torch.device('cpu')))
-            srgan_instance.eval()
+            # 체크포인트 경로 설정
+
+            srgan_checkpoint_path = '/Users/mac/Desktop/24년 대학/image_enhancer/checkpoints/ckpt_epoch_50.pth'
+
+            # 체크포인트 불러오기
+
+            checkpoint = torch.load(srgan_checkpoint_path, map_location=torch.device('cpu'))
+
+            # 모델 인스턴스 생성
+
+            srgan_instance = GeneratorResNet()
+
+            # 상태 불러오기
+
+            srgan_instance.load_state_dict(checkpoint['generator_state_dict'])
+
+            srgan_instance.eval()  # 평가 모드로 설정
 
             # 업로드된 이미지를 PIL 이미지로 변환
+
             input_pil_image = PilImage.open(original_image).convert("L")
 
             # 이미지를 모델에 입력하기 전에 적절한 텐서로 변환
+
             input_tensor = TF.to_tensor(input_pil_image).unsqueeze(0)
 
-            # 모델을 사용하여 이미지 개선
-            with torch.no_grad():
-                enhanced_tensor = srgan_instance(input_tensor)
+        # 모델을 사용하여 이미지 개선
 
-            # 모델 출력 후처리
-            enhanced_tensor = (enhanced_tensor.squeeze().detach() + 1) / 2
-            enhanced_pil_image = TF.to_pil_image(enhanced_tensor)
+        with torch.no_grad():
+            enhanced_tensor = srgan_instance(input_tensor)
 
-            # 개선된 이미지를 바이트 스트림으로 변환 및 저장
-            processed_image_stream = io.BytesIO()
-            enhanced_pil_image.save(processed_image_stream, format='JPEG', quality=90)
-            processed_image_stream.seek(0)
-            processed_image_file = ContentFile(processed_image_stream.read(), name="enhanced_" + original_image.name)
-            image_instance.enhanced_image.save(processed_image_file.name, processed_image_file)
+        # 모델 출력 후처리
 
-            # 이미지 인스턴스 저장 및 상세 페이지로 리디렉션
-            image_instance.save()
-            return redirect('image_detail', image_id=image_instance.id)
-            # 이미지 인스턴스 저장 및 상세 페이지로 리디렉션
+        enhanced_tensor = (enhanced_tensor.squeeze().detach() + 1) / 2
+
+        enhanced_pil_image = TF.to_pil_image(enhanced_tensor)
+
+        # 개선된 이미지를 바이트 스트림으로 변환 및 저장
+
+        processed_image_stream = io.BytesIO()
+
+        enhanced_pil_image.save(processed_image_stream, format='JPEG', quality=90)
+
+        processed_image_stream.seek(0)
+
+        processed_image_file = ContentFile(processed_image_stream.read(), name="enhanced_" + original_image.name)
+
+        # 이미지 인스턴스에 개선된 이미지 저장
+
+        image_instance.enhanced_image.save(processed_image_file.name, processed_image_file)
+
+        # 이미지 인스턴스 저장 및 상세 페이지로 리디렉션
+
+        image_instance.save()
+
         return redirect('image_detail', image_id=image_instance.id)
 
     return render(request, 'enhancer/upload.html')
