@@ -1,6 +1,5 @@
 {% load static %} <!-- static 템플릿 태그를 로드한다. -->
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,11 +15,15 @@
         <img id="image_preview" src="#" alt="Image Preview" style="display: none; width: 500px;"/> <!-- 스타일 수정 포함 -->
         <label for="enhanced_size">Enhanced Image Size:</label>
         <select name="enhanced_size" id="enhanced_size">
+            <option value="original">원본 크기 유지</option>
             <option value="800x600">800x600</option>
             <option value="1024x768">1024x768</option>
             <option value="1280x960">1280x960</option>
-            <!-- 추가적인 옵션을 제공한다. -->
+            <!-- 추가적인 옵션을 제공 -->
         </select>
+        {% if image_url %}
+            <img src="{{ image_url }}" alt="Processed Image">
+         {% endif %}
         <select name="enhance_option">
             <option value="resize">일반 사이즈 변경(무료)</option>
             <option value="gan">GAN을 이용한 이미지 강화(무료)</option>

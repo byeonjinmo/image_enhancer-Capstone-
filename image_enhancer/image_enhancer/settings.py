@@ -131,6 +131,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # settings.py 정적 파일을 제대로 서빙하기 위함
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # 웹 카메라 용 설정
 #MEDIA_URL = '/media/'

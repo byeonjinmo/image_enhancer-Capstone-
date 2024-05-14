@@ -2,40 +2,50 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.base import ContentFile
 from PIL import Image as PilImage
 import io
+import subprocess
 from .models import Image
 import torch
 from torchvision.transforms import functional as TF
-from .models.dcgan import DCGAN
-from .models.medical_srgan.models import GeneratorResNet
+import os
+from django.conf import settings
+from django.shortcuts import render
+import os
+from django.core.files import File
 
-def enhance_image(image_file, size):
-    if size == "original":
-        pil_image = PilImage.open(image_file)
-    else:
-        size = tuple(map(int, size.split('x')))
-        pil_image = PilImage.open(image_file).resize(size, PilImage.ANTIALIAS)
-    output_io_stream = io.BytesIO()
-    pil_image.save(output_io_stream, format='JPEG', quality=90)
-    output_io_stream.seek(0)
-    return output_io_stream
-def load_model(checkpoint_path):
-    model = GeneratorResNet()
-    checkpoint = torch.load(checkpoint_path, map_location=torch.device('cpu'))
-    model.load_state_dict(checkpoint['generator_state_dict'])
-    #model.eval()
-    return model
+output_directory = 'C:/Users/user/Desktop/chat_jin/image_enhancer-Capstone--JM/image_enhancer/media/enhanced'
+if not os.path.exists(output_directory):
+    os.makedirs(output_directory)
 
-def process_single_image(model, image_file):
-    input_pil_image = PilImage.open(image_file).convert("L")
-    input_tensor = TF.to_tensor(input_pil_image).unsqueeze(0)
-    with torch.no_grad():
-        enhanced_tensor = model(input_tensor)
-    enhanced_tensor = (enhanced_tensor.squeeze().detach() + 1) / 2
-    enhanced_pil_image = TF.to_pil_image(enhanced_tensor)
-    output_io_stream = io.BytesIO()
-    enhanced_pil_image.save(output_io_stream, format='JPEG', quality=90)
-    output_io_stream.seek(0)
-    return output_io_stream
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from .models import Image
+import os
+
+@require_POST
+def delete_image(request):
+    image_id = request.POST.get('image_id')
+    if image_id:
+        image = Image.objects.get(id=image_id)
+        if image.original_image:
+            if os.path.exists(image.original_image.path):
+                os.remove(image.original_image.path)  # 파일 시스템에서 이미지 삭제
+            image.original_image.delete()  # Django에서 파일 필드 삭제
+        image.delete()  # 이미지 레코드 삭제
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'}, status=400)
+
+
+def save_image_to_model(image_path, title):
+    # Image 모델 인스턴스 생성
+    image_instance = Image(title=title)
+
+    # 파일 시스템에서 이미지 파일 열기
+    with open(image_path, 'rb') as file:
+        django_file = File(file)
+        image_instance.original_image.save(os.path.basename(image_path), django_file)
+
+    image_instance.save()
+    return image_instance.id
 
 def upload_image_view(request):
     if request.method == 'POST' and request.FILES['original_image']:
@@ -44,23 +54,38 @@ def upload_image_view(request):
         image_instance = Image(title=title)
         image_instance.original_image.save(original_image.name, original_image)
 
-        # 이미지 파일 스트림을 처리하기 전에 seek(0)을 호출
-        original_image.seek(0)
-        model = load_model('/Users/mac/Desktop/24년 대학/image_enhancer/checkpoints/ckpt_epoch_50.pth')
-        enhanced_image_stream = process_single_image(model, original_image)
+        # 외부 스크립트 실행
+        script_path = 'C:/Users/user/Desktop/chat_jin/srgan_1(jin)/srgan.py'
+        output_image_path = os.path.join(output_directory, 'enhanced_' + original_image.name)
 
-        enhanced_image_file = ContentFile(enhanced_image_stream.read(), name="enhanced_" + original_image.name)
-        image_instance.enhanced_image.save(enhanced_image_file.name, enhanced_image_file)
+        subprocess.run([
+            'python', script_path,
+            # '--input_image', input_image_path,
+            # '--output_image', output_image_path,
+            # '--checkpoint', model_checkpoint_path
+        ], check=True)
+
+        # 이미지 URL 업데이트
+        #image_instance.enhanced_image = output_image_path
+        #image_instance.save()
+
+        # 이미지가 저장된 경로
+        image_path = 'C:/Users/user/Desktop/chat_jin/image_enhancer-Capstone--JM/image_enhancer/media/enhanced/0_.png'
+        image_title = 'Generated Image'
+
+        # 이미지 파일을 `enhanced_image` 필드에 저장
+        image_instance.enhanced_image.save('enhanced_' + original_image.name, File(open(image_path, 'rb')))
         image_instance.save()
+        #image_id = save_image_to_model(image_path, image_title)
         return redirect('image_detail', image_id=image_instance.id)
 
     return render(request, 'enhancer/upload.html')
+
 
 def image_detail_view(request, image_id):
     image = get_object_or_404(Image, id=image_id)
     return render(request, 'enhancer/image_detail.html', {'image': image})
 
+
 def index_view(request):
     return render(request, 'index.html')
-
-
