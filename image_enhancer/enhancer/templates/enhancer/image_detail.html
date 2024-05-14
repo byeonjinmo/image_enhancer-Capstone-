@@ -14,9 +14,35 @@
     </div>
     <div>
         <h2>Enhanced Image</h2>
-        <img src="{{ image.enhanced_image.url }}" alt="{{ image.title }}">
+        <img src="{{  image.enhanced_image.url }}" alt="{{ image.title }}">
         <!-- 처리된 이미지 다운로드 링크에 파일 이름 지정 -->
-        <a href="{{ image.enhanced_image.url }}" download="{{ image.title }}_enhanced.jpg">Download Enhanced Image</a>
+        <a href="{{  image.enhanced_image.url }}" download="{{ image.title }}_enhanced.jpg">Download Enhanced Image</a>
     </div>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    let cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        window.addEventListener('beforeunload', function () {
+            const data = new FormData();
+            data.append('image_id', '{{ image.id }}');
+            data.append('csrfmiddlewaretoken', getCookie('csrftoken'));  // CSRF 토큰 추가
+
+            navigator.sendBeacon('/delete-image/', data);
+        });
+    </script>
+
 </body>
+
 </html>
