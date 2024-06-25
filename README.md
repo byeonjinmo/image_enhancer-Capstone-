@@ -1,4 +1,4 @@
-<img src="./images/Before:After Brain Tumor MRI Enhancement.png" width="600px"></img>
+<img src="./images/Before:After Brain Tumor MRI Enhancement.png" high="600px" width="600px"></img>
 
 MRI of brain tumors improved using GANs 
 
