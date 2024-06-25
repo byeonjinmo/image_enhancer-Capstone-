@@ -1,20 +1,14 @@
-<img src="./images/Before:After Brain Tumor MRI Enhancement.png" high="600px" width="600px"></img>
+<img src="./images/Before : After Brain Tumor MRI Enhancement.png" high="600px" width="600px"></img>
 
 MRI of brain tumors improved using GANs 
 
 <img src="./images/sample-256.jpg" width="400px"></img>
 
-*256x256 flowers after 12 hours of training, 1 gpu*
+## 'A Parallelism-Based, Stepwise Approach to GAN for Efficient Stability Training' 
 
-<img src="./images/pizza-512.jpg" width="600px"></img>
+<img src="./images/A Parallelism-Based, Stepwise Approach to GAN for Efficient Stability Training.jpg" width="400px"></img>
 
-*Pizza*
-
-## 'Lightweight' GAN
-
-[![PyPI version](https://badge.fury.io/py/lightweight-gan.svg)](https://badge.fury.io/py/lightweight-gan)
-
-Implementation of <a href="https://openreview.net/forum?id=1Fqg133qRaI">'lightweight' GAN</a> proposed in ICLR 2021, in Pytorch. The main contributions of the paper is a skip-layer excitation in the generator, paired with autoencoding self-supervised learning in the discriminator. Quoting the one-line summary "converge on single gpu with few hours' training, on 1024 resolution sub-hundred images".
+One of the GAN models used 
 
 ## Install
 
