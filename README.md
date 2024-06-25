@@ -67,3 +67,13 @@ One command
 ```bash
 $ python manage.py runserver
 ```
+
+## Results screen 
+
+# Main page
+<img src="./images/Main page .tiff" width="400px"></img>
+# Select Options page 
+<img src="./images/Select Options page .png" width="400px"></img>
+
+# Result 
+<img src="./images/Result .png" width="400px"></img>
