@@ -1,6 +1,6 @@
 <img src="./images/Before:After Brain Tumor MRI Enhancement.png" width="600px"></img>
 
-*512x512 flowers after 12 hours of training, 1 gpu*
+MRI of brain tumors improved using GANs 
 
 <img src="./images/sample-256.jpg" width="400px"></img>
 
