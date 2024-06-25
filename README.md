@@ -14,6 +14,12 @@ MRI of brain tumors improved using GANs
 
 ## PSTGAN
 
+<img src="./images/Progressive Step Learning_Generator.png" width="400px"></img>
+<img src="./images/Progressive Step Learning_Discriminator.tiff" width="400px"></img>
+
+<img src="./images/Linear Mixing for Weighting on a Model-by-Model Basis .png" width="400px"></img>
+
+
 	Developing a weight transfer mechanism to utilize previous model weights.
 
 	Implementing a model training loop with hyperparameter adjustments based on the learning rate.
@@ -49,5 +55,3 @@ One command
 ```bash
 $ python manage.py runserver
 ```
-
-Model will be saved to `./models/{name}` every 1000 iterations, and samples from the model saved to `./results/{name}`. `name` will be `default`, by default.
