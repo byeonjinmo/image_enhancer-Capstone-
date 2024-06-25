@@ -69,9 +69,9 @@ $ python manage.py runserver
 ```
 
 ## Results screen 
-
 #### Main page
-<img src="./images/Main page .tiff" width="400px"></img>
+<img src="./images/Main page .png" width="400px"></img>
+
 #### Select Options page 
 <img src="./images/Select Options page .png" width="400px"></img>
 
