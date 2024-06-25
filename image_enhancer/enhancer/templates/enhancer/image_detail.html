@@ -1,48 +1,89 @@
+{% load static %} <!-- static 템플릿 태그를 로드한다. -->
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Detail</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+
+            background-size: cover;
+            background-position: center;
+            font-family: 'Montserrat', sans-serif;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        h1 {
+            margin-top: 20px;
+            font-size: 3em;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        h2 {
+            font-size: 2em;
+            margin-top: 20px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+        .image-container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            margin: 20px;
+            max-width: 600px;
+            width: 90%;
+        }
+        img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        a {
+            display: inline-block;
+            margin-top: 10px;
+            color: #00f;
+            text-decoration: underline;
+        }
+        a:hover {
+            text-decoration: none;
+        }
+        p {
+            font-size: 1.5em;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <h1>Image Detail</h1>
-    <div>
+    <div class="image-container">
         <h2>Original Image</h2>
         <img src="{{ image.original_image.url }}" alt="{{ image.title }}">
-        <!-- 원본 이미지 다운로드 링크에 파일 이름 지정 -->
         <a href="{{ image.original_image.url }}" download="{{ image.title }}_original.jpg">Download Original Image</a>
     </div>
-    <div>
+    <div class="image-container">
         <h2>Enhanced Image</h2>
-        <img src="{{  image.enhanced_image.url }}" alt="{{ image.title }}">
-        <!-- 처리된 이미지 다운로드 링크에 파일 이름 지정 -->
-        <a href="{{  image.enhanced_image.url }}" download="{{ image.title }}_enhanced.jpg">Download Enhanced Image</a>
+        <img src="{{ image.enhanced_image.url }}" alt="{{ image.title }}">
+        <a href="{{ image.enhanced_image.url }}" download="{{ image.title }}_enhanced.jpg">Download Enhanced Image</a>
+    </div>
+    <div class="image-container">
+        <h2>Classification Result</h2>
+        <p>{ 질병 있음 }</p>
     </div>
     <script>
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    let cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-
         window.addEventListener('beforeunload', function () {
-            const data = new FormData();
-            data.append('image_id', '{{ image.id }}');
-            data.append('csrfmiddlewaretoken', getCookie('csrftoken'));  // CSRF 토큰 추가
-
-            navigator.sendBeacon('/delete-image/', data);
+            navigator.sendBeacon('/clear-directory/');
         });
     </script>
-
 </body>
-
 </html>

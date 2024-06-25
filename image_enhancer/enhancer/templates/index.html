@@ -1,7 +1,4 @@
 {% load static %}
-<!-- 정적 파일 태그 로드 -->
-
-<!-- index.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,134 +6,111 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
         body {
-        display: flex;
-        flex-direction: column;   /* 스택의 방향을 세로로 설정 */
-        justify-content: center;
-        align-items: center;  /* 가로 방향으로도 중앙 정렬 */
-        height: 100vh;
-        margin: 0; /* 기본 마진 제거 */
-        /* 배경 이미지 설정 */
-        background-image: url('{% static "enhancer/images/bg0.jpg" %}');
-        /* 색상 그라데이션 배경 설정 */
-        /*background: linear-gradient(to right, #a1c4fd, #c2e9fb);*/
-        background-size: cover;
-        background-position: center;
-        color: #ffffff; /* 텍스트 색상을 흰색으로 설정 */
-        font-family: 'Arial', sans-serif; /* 폰트 설정 */
-    }
-    h1 {
-            margin-bottom: 130px; /* 제목과 버튼 사이의 공간 설정 */
-            background: rgba(0, 0, 0, 0); /* 제목 배경 반투명 효과 */
-            padding: 10px; /* 내부 여백 설정 */
-            border-radius: 5px; /* 경계선 둥글게 설정 */
-
-            top: 100px; /* Position from the top */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url('{% static "enhancer/images/bg1.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
         }
-        .start-container {
+        .navbar {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar a {
+            color: #111111;
             text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 1.2em;
+            font-weight: 700;
+            margin: 0 10px;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            color: #111111;
+        }
+        .content {
+            text-align: center;
+            margin-top: 100px; /* Adjust margin to avoid overlap with navbar */
+        }
+        h1 {
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-size: 3em;
         }
         .start-btn {
             background-color: #007BFF;
+            background: linear-gradient(to right, #007BFF, #0056b3);
             color: white;
-            padding: 10px 20px;
+            padding: 15px 30px;
             border: none;
-            border-radius: 5px;
+            border-radius: 30px;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 1.5em;
             transition: background-color 0.3s ease;
-            position: marker;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         .start-btn:hover {
             background-color: #0056b3;
-
         }
-    </style>
-    <!-- 메뉴바 스타일 -->
-    <style>
-        body { margin: 0; font-family: Arial, sans-serif; }
-        .navbar {
-            position:relative;
-            top: -220px;
-            left: -98px;
+        .footer {
+            position: fixed;
+            bottom: 0;
             width: 100%;
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
         }
-        .navbar { background-color: white; overflow: hidden; }
-        .navbar a { float: left; display: compact; color: #111111; text-align: center; padding: 14px 20px; text-decoration: none; }
-        .navbar a:hover { background-color: #ddd; color: white; }
-        .navbar ::before {
-            content: none;
-        }
-
     </style>
-    <style>
-    /* 로딩 애니메이션 스타일 */
-    .loader {
-        border: 5px solid #f3f3f3; /* Light grey */
-        border-top: 5px solid #3498db; /* Blue */
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        animation: spin 2s linear infinite;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-</style>
-
-<div id="loader" class="loader"></div>
-
 </head>
 <body>
-    <nav>
-        <ul>
-            <div class="navbar">
-                <li><a href="{% url 'index' %}">Image Enhancer</a></li>
-                <li><a href="/enhancer/upload">GAN 이용 화질 개선</a></li>
-                <li><a href="http://127.0.0.1:5000">카메라 및 디바이스 연결</a></li>
-                <li><a href="#">이미지 생성</a></li>
-                <li><a href="#">Q&A</a></li>
-                <li><a href="#">Help</a></li>
-                <li><a href="#">Ref</a></li>
-            </div>
-        </ul>
+    <nav class="navbar">
+        <a href="{% url 'index' %}">Home</a>
+        <a href="/enhancer/upload">Image Enhancer</a>
+        <a href="#">Image Deterioration</a>
+        <a href="#">Help</a>
     </nav>
-    <div class="start-container">
+    <div class="content">
         <h1>Welcome to Image Enhancer</h1>
         <button class="start-btn" onclick="startService()">Start</button>
+    </div>
+    <div class="footer">
+        © 2024 Image Enhancer. All rights reserved.
     </div>
 
     <script>
         function startService() {
             window.location.href = '/enhancer/upload/';
         }
+        function hideLoader() {
+            document.getElementById('loader').style.display = 'none';
+        }
+        function showLoader() {
+            document.getElementById('loader').style.display = 'block';
+        }
+        showLoader();
+        setTimeout(hideLoader, 2000);
+        function onImageProcessed() {
+            hideLoader();
+        }
     </script>
-    <script>
-    // 로딩 애니메이션을 숨기는 함수
-    function hideLoader() {
-        document.getElementById('loader').style.display = 'none';
-    }
-
-    // 로딩 애니메이션을 표시하는 함수
-    function showLoader() {
-        document.getElementById('loader').style.display = 'block';
-    }
-
-    // 이미지 처리가 시작될 때 로더를 표시
-    showLoader();
-
-    // 기본적으로 2초 후에 로더를 숨김
-    setTimeout(hideLoader, 2000);
-
-    // 이미지 처리가 끝나면 호출될 함수 (예시)
-    function onImageProcessed() {
-        hideLoader();
-    }
-
-    // 이미지 처리가 2초보다 더 걸릴 경우에 대비하여
-    // onImageProcessed 함수를 이미지 처리 로직이 완료되는 지점에서 호출해야 합니다.
-</script>
-
 </body>
 </html>

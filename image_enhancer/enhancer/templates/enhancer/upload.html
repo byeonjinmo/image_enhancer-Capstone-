@@ -1,65 +1,180 @@
 {% load static %} <!-- static 템플릿 태그를 로드한다. -->
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Image</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-image: url('{% static "enhancer/images/bg1.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Montserrat', sans-serif;
+            color: #333;
+        }
+        h1 {
+            margin-top: 100px;
+            margin-bottom: 20px;
+            font-size: 2.5em; /* 인덱스 페이지와 동일한 크기 */
+            font-weight: 700; /* 인덱스 페이지와 동일한 굵기 */
+            text-align: center;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .form-container {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 600px;
+            margin: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #007BFF;
+            padding: 10px;
+            font-size: 1.1em;
+            font-weight: 400; /* 기본 폰트 굵기 설정 */
+        }
+        .form-control-file {
+            border-radius: 10px;
+            border: 2px solid #007BFF;
+            padding: 5px;
+            font-size: 1.1em;
+            font-weight: 400; /* 기본 폰트 굵기 설정 */
+        }
+        .btn-primary {
+            background: linear-gradient(to right, #007BFF, #0056b3);
+            border: none;
+            border-radius: 30px;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: 700; /* 버튼의 폰트 굵기 설정 */
+            transition: background 0.3s ease;
+            display: block;
+            width: 100%;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+        .loading-gif-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            display: none; /* 처음에는 표시되지 않도록 설정 */
+        }
+        .loading-gif-container img {
+            max-width: 80%;
+            max-height: 80%;
+        }
+        #image_preview {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+            color: #007BFF;
+        }
+        .navbar {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar a {
+            color: #111111;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 1.2em;
+            font-weight: 700; /* 네비게이션 링크의 폰트 굵기 설정 */
+            margin: 0 10px;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            color: #111111;
+        }
+    </style>
 </head>
 <body>
+    <nav class="navbar">
+        <a href="{% url 'index' %}">Home</a>
+        <a href="/enhancer/upload">Image Enhancer</a>
+        <a href="#">Image Deterioration</a>
+        <a href="#">Help</a>
+    </nav>
     <h1>Upload an Image</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="text" name="title" placeholder="Enter image title" required>
-        <input type="file" name="original_image" id="original_image" required onchange="previewImage();">
-        <!-- 이미지 미리보기를 표시할 img 태그 -->
-        <img id="image_preview" src="#" alt="Image Preview" style="display: none; width: 500px;"/> <!-- 스타일 수정 포함 -->
-        <label for="enhanced_size">Enhanced Image Size:</label>
-        <select name="enhanced_size" id="enhanced_size">
-            <option value="original">원본 크기 유지</option>
-            <option value="800x600">800x600</option>
-            <option value="1024x768">1024x768</option>
-            <option value="1280x960">1280x960</option>
-            <!-- 추가적인 옵션을 제공 -->
-        </select>
-        {% if image_url %}
-            <img src="{{ image_url }}" alt="Processed Image">
-         {% endif %}
-        <select name="enhance_option">
-            <option value="resize">일반 사이즈 변경(무료)</option>
-            <option value="gan">GAN을 이용한 이미지 강화(무료)</option>
-            <option value="advanced_gan">고급 GAN을 이용한 이미지 강화(유료)</option>
-        </select>
-        <button type="submit">Upload</button>
-    </form>
-    <div id="loading" style="display: none;">
-    <div class="loading-spinner"></div>
+    <div class="form-container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" class="form-control" name="title" placeholder="Enter image title" required>
+            </div>
+            <div class="form-group">
+                <input type="file" class="form-control-file" name="original_image" id="original_image" required onchange="previewImage();">
+            </div>
+            <img id="image_preview" src="#" alt="Image Preview" class="img-fluid rounded">
+            <div class="form-group">
+                <label for="enhanced_size">Enhanced Image Size:</label>
+                <select class="form-control" name="enhanced_size" id="enhanced_size">
+                    <option value="original">원본 크기 유지</option>
+                    <option value="800x600">800x600</option>
+                    <option value="1024x768">1024x768</option>
+                    <option value="1280x960">1280x960</option>
+                </select>
+            </div>
+            {% if image_url %}
+                <div class="form-group">
+                    <img src="{{ image_url }}" alt="Processed Image" class="img-fluid rounded">
+                </div>
+            {% endif %}
+            <div class="form-group">
+                <label for="enhance_option">Enhance Option:</label>
+                <select class="form-control" name="enhance_option">
+                    <option value="resize">일반 사이즈 변경(무료)</option>
+                    <option value="gan">GAN을 이용한 이미지 강화(무료)</option>
+                    <option value="advanced_gan">고급 GAN을 이용한 이미지 강화(유료)</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
     </div>
-    <!--로딩 스타일 -->
-    <style>
-        .loading-spinner {
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #3498db;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-    </style>
-
-    <!--<script>
-        document.querySelector("form").onsubmit = function() {
-        alert("Your image is being processed. Please wait...");
-        // 일단 간단하게하기 위한 alert. 후에 더 사용자 친화적인 알림 방법을 고려해야함 *****.
-    }
-    </script>-->
-
-
+    <!--div id="loading" class="loading-gif-container">
+        <img src="{% static 'enhancer/vidios/loading.gif' %}" alt="Loading...">
+    </div>
     <script>
         function previewImage() {
             var preview = document.getElementById('image_preview');
@@ -68,19 +183,22 @@
 
             reader.onloadend = function() {
                 preview.src = reader.result;
-                preview.style.display = 'block'; // 이미지가 선택되면 미리보기를 표시
+                preview.style.display = 'block';
             }
 
             if (file) {
-                reader.readAsDataURL(file); // 파일 읽기
+                reader.readAsDataURL(file);
             } else {
                 preview.src = "";
-                preview.style.display = 'none'; // 파일이 선택되지 않았으면 미리보기 숨김
+                preview.style.display = 'none';
             }
         }
-    </script>
-    <script src="{% static 'js/uploadHandler.js' %}"></script>
 
+        document.querySelector("form").onsubmit = function() {
+            document.getElementById('loading').style.display = 'flex';
+            // AJAX 요청과 같은 비동기 처리 로직을 여기에 추가
+        };
+    </--script>
+    <script src="{% static 'js/enhancer/uploadHandler.js' %}"></script-->
 </body>
 </html>
-

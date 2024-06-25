@@ -11,3 +11,7 @@ class Image(models.Model):
 
     # 이 모델은 원본 이미지(original_image), 개선된 이미지(enhanced_image),
     # 그리고 이미지 제목(title)을 포함함. upload_to 옵션은 업로드된 파일을 저장할 하위 디렉토리를 지정함.
+
+
+def medical_srgan():
+    return None
