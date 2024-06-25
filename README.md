@@ -6,9 +6,30 @@ MRI of brain tumors improved using GANs
 
 ## 'A Parallelism-Based, Stepwise Approach to GAN for Efficient Stability Training' 
 
-<img src="./images/A Parallelism-Based, Stepwise Approach to GAN for Efficient Stability Training.jpg" width="400px"></img>
+<img src="./images/A Parallelism-Based, Stepwise Approach to GAN for Efficient Stability Training.png" width="400px"></img>
 
-One of the GAN models used 
+## SRGAN
+Implementation of _Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network_.
+
+[Code](srgan/srgan.py)
+
+Paper: https://arxiv.org/abs/1609.04802
+
+<p align="center">
+    <img src="http://eriklindernoren.se/images/superresgan.png" width="640"\>
+</p>
+
+
+### Example
+```
+$ cd srgan/
+<follow steps at the top of srgan.py>
+$ python3 srgan.py
+```
+
+<p align="center">
+    <img src="http://eriklindernoren.se/images/srgan.png" width="640"\>
+</p>
 
 ## Install
 
