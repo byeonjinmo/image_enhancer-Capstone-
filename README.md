@@ -1,4 +1,4 @@
-<img src="./images/sample-512.jpg" width="600px"></img>
+<img src="./images/Before:After Brain Tumor MRI Enhancement.png" width="600px"></img>
 
 *512x512 flowers after 12 hours of training, 1 gpu*
 
