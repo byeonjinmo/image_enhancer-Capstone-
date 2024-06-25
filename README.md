@@ -2,11 +2,18 @@
 
 MRI of brain tumors improved using GANs 
 
-<img src="./images/sample-256.jpg" width="400px"></img>
-
 ## 'A Parallelism-Based, Stepwise Approach to GAN for Efficient Stability Training' 
 
 <img src="./images/A Parallelism-Based, Stepwise Approach to GAN for Efficient Stability Training.png" width="400px"></img>
+
+## PSTGAN
+
+	Developing a weight transfer mechanism to utilize previous model weights.
+	Implementing a model training loop with hyperparameter adjustments based on the learning rate.
+
+
+Paper: https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003063520
+
 
 ## SRGAN
 Implementation of _Photo-Realistic Single Image Super-Resolution Using a Generative Adversarial Network_.
